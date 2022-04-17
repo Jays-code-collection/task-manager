@@ -1,0 +1,1 @@
+INSERT INTO test (numbers) VALUES (12), (14), (3), (77), (198), (1001);
