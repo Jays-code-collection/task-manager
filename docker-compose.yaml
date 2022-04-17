@@ -1,0 +1,25 @@
+# A Docker Compose must always start with the version tag.
+# We use '3' because it's the last version.
+version: '3.7'
+services:
+  task-manager-db:
+    image: 'postgres:latest'
+    restart: always
+
+    ports:
+      - 5432:5432
+
+    environment:
+      POSTGRES_USER: postgres # The PostgreSQL user (useful to connect to the database)
+      POSTGRES_PASSWORD: postgres # The PostgreSQL password (useful to connect to the database)
+    
+    logging:
+          options:
+            max-size: 10m
+            max-file: "3"
+    volumes: 
+      - ./postgres-data:/var/lib/postgresql/data
+      # copy the sql script to create tables
+      - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      # copy the sql script to fill tables
+      - ./sql/populate_tables.sql:/docker-entrypoint-initdb.d/populate_tables.sql
