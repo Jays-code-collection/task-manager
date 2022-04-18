@@ -1,1 +1,1 @@
-INSERT INTO test (numbers) VALUES (12), (14), (3), (77), (198), (1001);
+INSERT INTO test (numbers, luckiness) VALUES (12, 'Lucky'), (14, 'Lucky'), (3, 'Unlucky'), (77, 'Neutral'), (198, 'Lucky'), (1001, 'Unlucky');
