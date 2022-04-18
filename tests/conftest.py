@@ -17,7 +17,6 @@ def connection():
         password="postgres",
     )
     yield conn
-    conn.commit()
     conn.close()
 
 
