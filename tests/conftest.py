@@ -11,7 +11,7 @@ def lucky_number():
 @pytest.fixture
 def connection():
     conn = psycopg2.connect(
-        host="DESKTOP-RAMNUB0",  # Need to change this to your machines name
+        host="YOUR MACHINE HERE",  # Need to change this to your machines name
         database="postgres",
         user="postgres",
         password="postgres",
