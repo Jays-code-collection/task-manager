@@ -1,16 +1,16 @@
+from unittest import result
 import pytest
 
 from backend.db_access import DBAccessor
 
 
 @pytest.mark.medium
-def test_get_all_data(cursor):
+def test_get_all_data(cursor, fetch_all_rows_query):
     # GIVEN
     db = DBAccessor(cursor)
-    fetch_query = "SELECT * FROM test ORDER BY numbers;"
 
     # WHEN
-    result = db.send_query(fetch_query)
+    result = db.send_query(fetch_all_rows_query)
 
     # THEN
     assert result
@@ -18,46 +18,47 @@ def test_get_all_data(cursor):
     assert result[0] == (3, "Unlucky")
 
 
-# cursor.execute('SELECT * from table where id = %(some_id)d', {'some_id': 1234})
-# cursor.fetchmany(2) # Limit how many rows selected
-# db = DBAccessor(cursor)
-# select_all = db.send_query("SELECT * FROM test;")
-# print(select_all)
+@pytest.mark.medium
+def test_delete_query(cursor, fetch_all_rows_query):
+    # GIVEN
+    db = DBAccessor(cursor)
 
-# delete_rows = db.send_query("DELETE FROM test WHERE numbers = 3")
-# print(delete_rows)
+    # WHEN
+    before = db.send_query(fetch_all_rows_query)
+    db.send_query("DELETE FROM test WHERE numbers = 3")
+    after = db.send_query(fetch_all_rows_query)
 
-# select_all = db.send_query("SELECT * FROM test;")
-# print(select_all)
+    # THEN
+    assert len(before) - 1 == len(after)
+    for row in after:
+        if row[0] == 3:
+            assert False
 
-# inserted = db.send_query("INSERT INTO test (numbers, luckiness) VALUES (1, 'Unlucky');")
-# print(inserted)
 
-# select_all = db.send_query("SELECT * FROM test;")
-# print(select_all)
+@pytest.mark.medium
+def test_insert_query(cursor, fetch_all_rows_query):
+    # GIVEN
+    db = DBAccessor(cursor)
 
-# updated = db.send_query("UPDATE test SET luckiness = 'Lucky' WHERE numbers = '77';")
-# print(updated)
+    # WHEN
+    before = db.send_query(fetch_all_rows_query)
+    db.send_query("INSERT INTO test (numbers, luckiness) VALUES (1, 'Unlucky');")
+    after = db.send_query(fetch_all_rows_query)
 
-# select_all = db.send_query("SELECT * FROM test;")
-# print(select_all)
+    # THEN
+    assert len(before) + 1 == len(after)
+    assert after[0] == (1, "Unlucky")
 
-# # DB.commit() need to commit changes for them to be written to the DB
 
-# # Close connection
-# cursor.close()
-# connection.close()
+@pytest.mark.medium
+def test_update_query(cursor, fetch_all_rows_query):
+    db = DBAccessor(cursor)
 
-# Connect to DB
-# connection = psycopg2.connect(
-#     host="DESKTOP-RAMNUB0",  # Need to change this to your machines name
-#     database="postgres",
-#     user="postgres",
-#     password="postgres",
-# )
+    # WHEN
+    before = db.send_query(fetch_all_rows_query)
+    db.send_query("UPDATE test SET luckiness = 'Lucky' WHERE numbers = '77';")
+    after = db.send_query(fetch_all_rows_query)
 
-# cursor = connection.cursor()
-# cursor.execute("SELECT * FROM test;")
-
-# for row in cursor.fetchall():
-#     print(row)
+    # THEN
+    assert before[3] == (77, "Neutral")
+    assert after[3] == (77, "Lucky")
