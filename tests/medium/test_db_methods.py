@@ -1,16 +1,13 @@
 from unittest import result
 import pytest
 
-from backend.db_access import DBAccessor
+from backend.db_access import send_query
 
 
 @pytest.mark.medium
 def test_get_all_data(cursor, fetch_all_rows_query):
-    # GIVEN
-    db = DBAccessor(cursor)
-
-    # WHEN
-    result = db.send_query(fetch_all_rows_query)
+    # GIVEN / WHEN
+    result = send_query(cursor, fetch_all_rows_query)
 
     # THEN
     assert result
@@ -20,13 +17,10 @@ def test_get_all_data(cursor, fetch_all_rows_query):
 
 @pytest.mark.medium
 def test_delete_query(cursor, fetch_all_rows_query):
-    # GIVEN
-    db = DBAccessor(cursor)
-
-    # WHEN
-    before = db.send_query(fetch_all_rows_query)
-    db.send_query("DELETE FROM test WHERE numbers = 3")
-    after = db.send_query(fetch_all_rows_query)
+    # GIVEN / WHEN
+    before = send_query(cursor, fetch_all_rows_query)
+    send_query(cursor, "DELETE FROM test WHERE numbers = 3")
+    after = send_query(cursor, fetch_all_rows_query)
 
     # THEN
     assert len(before) - 1 == len(after)
@@ -37,13 +31,10 @@ def test_delete_query(cursor, fetch_all_rows_query):
 
 @pytest.mark.medium
 def test_insert_query(cursor, fetch_all_rows_query):
-    # GIVEN
-    db = DBAccessor(cursor)
-
-    # WHEN
-    before = db.send_query(fetch_all_rows_query)
-    db.send_query("INSERT INTO test (numbers, luckiness) VALUES (1, 'Unlucky');")
-    after = db.send_query(fetch_all_rows_query)
+    # GIVEN / WHEN
+    before = send_query(cursor, fetch_all_rows_query)
+    send_query(cursor, "INSERT INTO test (numbers, luckiness) VALUES (1, 'Unlucky');")
+    after = send_query(cursor, fetch_all_rows_query)
 
     # THEN
     assert len(before) + 1 == len(after)
@@ -52,12 +43,10 @@ def test_insert_query(cursor, fetch_all_rows_query):
 
 @pytest.mark.medium
 def test_update_query(cursor, fetch_all_rows_query):
-    db = DBAccessor(cursor)
-
-    # WHEN
-    before = db.send_query(fetch_all_rows_query)
-    db.send_query("UPDATE test SET luckiness = 'Lucky' WHERE numbers = '77';")
-    after = db.send_query(fetch_all_rows_query)
+    # GIVEN / WHEN
+    before = send_query(cursor, fetch_all_rows_query)
+    send_query(cursor, "UPDATE test SET luckiness = 'Lucky' WHERE numbers = '77';")
+    after = send_query(cursor, fetch_all_rows_query)
 
     # THEN
     assert before[3] == (77, "Neutral")

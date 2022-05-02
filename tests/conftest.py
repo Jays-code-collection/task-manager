@@ -25,3 +25,8 @@ def cursor(connection):
     cursor = connection.cursor()
     yield cursor
     cursor.close()
+
+
+@pytest.fixture
+def fetch_all_rows_query():
+    yield "SELECT * FROM test ORDER BY numbers"
